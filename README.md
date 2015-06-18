@@ -37,6 +37,7 @@ class ShortenUrlCommand
 A command handler will be called by the command bus when it handle command. 
 
 The handler could be:
+
     - A callable (\Closure or a callback)
     - An object. In example of ShortenUrlCommand, the bus will execute `$object->shortenUrl($command)`
 
@@ -44,6 +45,7 @@ The handler could be:
 
 It'll find a command handler then handle the command.
 We provide at this moment two command bus:
+
     - Direct (synchronous)
     - Redis (asynchronous)
     - Implement your own command bus with `\Rezzza\CommandBus\CommandBusInterface`
@@ -53,6 +55,7 @@ You can see `examples` to see them in action.
 # Fail Strategies
 
 When the bus handle the command, and the command handler fail, you may want to re-queue the command to be executed later.
+
     - RetryThenFailStrategy: The command is requeued in a `Retry` queue, you'll be able to consume this queue and configure how many time you want to execute it before it goes to a `Fail` queue. Look at `examples/redis_worker.php` example to understand how it work.
     - RequeueStrategy: The command is requeued
     - NoneStrategy: The command will not being requeued.
