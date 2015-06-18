@@ -1,15 +1,16 @@
 <?php
 
-namespace Rezzza\CommandBus\Bus;
+namespace Rezzza\CommandBus\Infra\Provider\Direct;
 
 use Psr\Log\LoggerInterface;
-use Rezzza\CommandBus\CommandInterface;
-use Rezzza\CommandBus\Handler\CommandHandlerLocatorInterface;
+use Rezzza\CommandBus\Domain\CommandInterface;
+use Rezzza\CommandBus\Domain\Handler\CommandHandlerLocatorInterface;
+use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
 
-class Direct implements DirectBusInterface
+class DirectBus implements DirectCommandBusInterface
 {
     private $commandStack = [];
-    private $executing    = false;
+    private $executing = false;
     private $locator;
     private $logger;
 

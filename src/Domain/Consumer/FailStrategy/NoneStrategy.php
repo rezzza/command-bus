@@ -1,8 +1,8 @@
 <?php
 
-namespace Rezzza\CommandBus\Consumer\FailStrategy;
+namespace Rezzza\CommandBus\Domain\Consumer\FailStrategy;
 
-use Rezzza\CommandBus\Exception\CommandHandlerFailedException;
+use Rezzza\CommandBus\Domain\Exception\CommandHandlerFailedException;
 use Psr\Log\LoggerInterface;
 
 class NoneStrategy implements FailStrategyInterface

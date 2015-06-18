@@ -17,17 +17,17 @@ $logger = new Logger();
 // redis bus
 $redis = new \Redis();
 $redis->connect('127.0.0.1');
-$redisBus = new CommandBus\Bus\Redis($redis, $logger);
+$redisBus = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $logger);
 
 // direct bus and its handlers.
-$handlerLocator = new CommandBus\Handler\MemoryHandlerLocator();
-$directBus      = new CommandBus\Bus\Direct($handlerLocator, $logger);
+$handlerLocator = new CommandBus\Infra\Handler\MemoryHandlerLocator();
+$directBus      = new CommandBus\Infra\Provider\Direct\DirectBus($handlerLocator, $logger);
 
 // fail strategy, if command fail, it'll retry 10 times in a retry queue then go to a failed queue..
-$failStrategy = new CommandBus\Consumer\FailStrategy\RetryThenFailStrategy($redisBus, 10, $logger);
+$failStrategy = new CommandBus\Domain\Consumer\FailStrategy\RetryThenFailStrategy($redisBus, 10, $logger);
 // With requeue strategy, not useful to use Retry and Failed handlers|consumers.
-//$failStrategy = new CommandBus\Consumer\FailStrategy\RequeueStrategy($redisBus, $logger);
-//$failStrategy = new CommandBus\Consumer\FailStrategy\NoneStrategy($logger);
+//$failStrategy = new CommandBus\Domain\Consumer\FailStrategy\RequeueStrategy($redisBus, $logger);
+//$failStrategy = new CommandBus\Domain\Consumer\FailStrategy\NoneStrategy($logger);
 
 $handlerLocator->addHandler('FooCommand', function($command) {
     $rand = rand(1, 10);
@@ -37,14 +37,14 @@ $handlerLocator->addHandler('FooCommand', function($command) {
     }
 });
 
-$handlerLocator->addHandler('Rezzza\CommandBus\Command\RetryCommand', new CommandBus\Handler\RetryHandler($directBus, $failStrategy, $logger));
-$handlerLocator->addHandler('Rezzza\CommandBus\Command\FailedCommand', function($command) {
+$handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\RetryCommand', new CommandBus\Domain\Handler\RetryHandler($directBus, $failStrategy, $logger));
+$handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', function($command) {
     echo chr(10).sprintf('[FAILED] command [%s], number of tenatives %d', get_class($command), $command->getTryCount());
 });
 
 // consumer
-$consumer = new CommandBus\Consumer\Consumer(
-    new CommandBus\Consumer\Provider\Redis($redis),
+$consumer = new CommandBus\Domain\Consumer\Consumer(
+    new CommandBus\Infra\Provider\Redis\RedisConsumerProvider($redis),
     $directBus,
     $failStrategy
 );

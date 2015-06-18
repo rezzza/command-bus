@@ -1,8 +1,8 @@
 <?php
 
-namespace Rezzza\CommandBus\Consumer\Provider;
+namespace Rezzza\CommandBus\Domain\Consumer;
 
-use Rezzza\CommandBus\CommandInterface;
+use Rezzza\CommandBus\Domain\CommandInterface;
 
 interface ProviderInterface
 {

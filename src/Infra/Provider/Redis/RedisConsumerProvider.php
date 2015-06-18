@@ -1,10 +1,10 @@
 <?php
 
-namespace Rezzza\CommandBus\Consumer\Provider;
+namespace Rezzza\CommandBus\Infra\Provider\Redis;
 
-use Rezzza\CommandBus\Bus\Redis as RedisBus;
+use Rezzza\CommandBus\Domain\Consumer\ProviderInterface;
 
-class Redis implements ProviderInterface
+class RedisConsumerProvider implements ProviderInterface
 {
     /**
      * @var \Redis

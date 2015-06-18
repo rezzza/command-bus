@@ -11,7 +11,7 @@ $i = isset($argv[1]) ? (int) $argv[1] : 10;
 $redis = new \Redis();
 $redis->connect('127.0.0.1');
 
-$bus = new CommandBus\Bus\Redis($redis, new Logger());
+$bus = new CommandBus\Infra\Provider\Redis\RedisBus($redis, new Logger());
 
 for ($j = 0; $j < $i; $j++) {
     $bus->handle(new FooCommand(uniqid()));

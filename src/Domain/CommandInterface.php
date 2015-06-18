@@ -1,6 +1,6 @@
 <?php
 
-namespace Rezzza\CommandBus;
+namespace Rezzza\CommandBus\Domain;
 
 interface CommandInterface
 {

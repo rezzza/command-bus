@@ -1,12 +1,12 @@
 <?php
 
-namespace Rezzza\CommandBus\Bus;
+namespace Rezzza\CommandBus\Infra\Provider\Redis;
 
 use Psr\Log\LoggerInterface;
-use Rezzza\CommandBus\CommandBusInterface;
-use Rezzza\CommandBus\CommandInterface;
+use Rezzza\CommandBus\Domain\CommandBusInterface;
+use Rezzza\CommandBus\Domain\CommandInterface;
 
-class Redis implements CommandBusInterface
+class RedisBus implements CommandBusInterface
 {
     CONST PREFIX = 'rezzza_command_bus:';
 

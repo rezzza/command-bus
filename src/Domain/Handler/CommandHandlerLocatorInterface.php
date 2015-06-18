@@ -1,9 +1,9 @@
 <?php
 
-namespace Rezzza\CommandBus\Handler;
+namespace Rezzza\CommandBus\Domain\Handler;
 
-use Rezzza\CommandBus\CommandInterface;
-use Rezzza\CommandBus\Exception\CommandHandlerNotFoundException;
+use Rezzza\CommandBus\Domain\CommandInterface;
+use Rezzza\CommandBus\Domain\Exception\CommandHandlerNotFoundException;
 
 interface CommandHandlerLocatorInterface
 {

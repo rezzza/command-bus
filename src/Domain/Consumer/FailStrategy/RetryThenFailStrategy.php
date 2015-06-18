@@ -1,11 +1,11 @@
 <?php
 
-namespace Rezzza\CommandBus\Consumer\FailStrategy;
+namespace Rezzza\CommandBus\Domain\Consumer\FailStrategy;
 
-use Rezzza\CommandBus\CommandBusInterface;
-use Rezzza\CommandBus\Command\FailedCommand;
-use Rezzza\CommandBus\Command\RetryCommand;
-use Rezzza\CommandBus\Exception\CommandHandlerFailedException;
+use Rezzza\CommandBus\Domain\CommandBusInterface;
+use Rezzza\CommandBus\Domain\Command\FailedCommand;
+use Rezzza\CommandBus\Domain\Command\RetryCommand;
+use Rezzza\CommandBus\Domain\Exception\CommandHandlerFailedException;
 use Psr\Log\LoggerInterface;
 
 class RetryThenFailStrategy implements FailStrategyInterface
@@ -27,10 +27,6 @@ class RetryThenFailStrategy implements FailStrategyInterface
     {
         $command = $exception->getCommand();
 
-        if ($this->logger) {
-            $this->logger->error(sprintf('[RetryThenFailStrategy] command [%s] failed, attemps %d.', get_class($command->getCommand()), $command->getTryCount()));
-        }
-
         if ($command instanceof RetryCommand) {
             if ($command->getTryCount() === $this->failOnCount) {
                 $command = new FailedCommand($command->getCommand(), $this->failOnCount);
@@ -45,6 +41,12 @@ class RetryThenFailStrategy implements FailStrategyInterface
             return;
         } else {
             $command = new RetryCommand($command);
+
+
+        }
+
+        if ($this->logger) {
+            $this->logger->error(sprintf('[RetryThenFailStrategy] command [%s] failed, attemps %d.', get_class($command->getCommand()), $command->getTryCount()));
         }
 
         $this->commandBus->handle($command);

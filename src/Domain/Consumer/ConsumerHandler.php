@@ -1,10 +1,10 @@
 <?php
 
-namespace Rezzza\CommandBus\Consumer;
+namespace Rezzza\CommandBus\Domain\Consumer;
 
-use Rezzza\CommandBus\CommandBusInterface;
-use Rezzza\CommandBus\Consumer\FailStrategy\FailStrategyInterface;
-use Rezzza\CommandBus\Exception\CommandHandlerFailedException;
+use Rezzza\CommandBus\Domain\CommandBusInterface;
+use Rezzza\CommandBus\Domain\Consumer\FailStrategy\FailStrategyInterface;
+use Rezzza\CommandBus\Domain\Exception\CommandHandlerFailedException;
 
 class ConsumerHandler
 {

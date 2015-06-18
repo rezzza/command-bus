@@ -1,6 +1,6 @@
 <?php
 
-use Rezzza\CommandBus\CommandInterface;
+use Rezzza\CommandBus\Domain\CommandInterface;
 
 class FooCommand implements CommandInterface
 {

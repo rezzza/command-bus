@@ -1,8 +1,8 @@
 <?php
 
-namespace Rezzza\CommandBus\Exception;
+namespace Rezzza\CommandBus\Domain\Exception;
 
-use Rezzza\CommandBus\CommandInterface;
+use Rezzza\CommandBus\Domain\CommandInterface;
 
 class CommandHandlerNotFoundException extends \LogicException
 {
