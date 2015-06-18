@@ -22,7 +22,7 @@ class RedisConsumerProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function lpop($command)
+    public function dequeue($command)
     {
         $commandSerialized = $this->client->lpop(RedisBus::getRedisKey($command));
 

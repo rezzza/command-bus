@@ -11,5 +11,5 @@ interface ProviderInterface
      *
      * @return CommandInterface|null
      */
-    public function lpop($command);
+    public function dequeue($command);
 }

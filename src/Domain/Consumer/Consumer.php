@@ -22,7 +22,7 @@ class Consumer
 
     public function consume($command)
     {
-        $command = $this->provider->lpop($command);
+        $command = $this->provider->dequeue($command);
 
         if ($command) {
             try {

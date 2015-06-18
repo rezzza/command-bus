@@ -29,7 +29,7 @@ $failStrategy = new CommandBus\Domain\Consumer\FailStrategy\RetryThenFailStrateg
 //$failStrategy = new CommandBus\Domain\Consumer\FailStrategy\RequeueStrategy($redisBus, $logger);
 //$failStrategy = new CommandBus\Domain\Consumer\FailStrategy\NoneStrategy($logger);
 
-$handlerLocator->addHandler('FooCommand', function($command) {
+$handlerLocator->addHandler('FooCommand', function ($command) {
     $rand = rand(1, 10);
 
     if ($rand != 7) {
@@ -38,7 +38,7 @@ $handlerLocator->addHandler('FooCommand', function($command) {
 });
 
 $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\RetryCommand', new CommandBus\Domain\Handler\RetryHandler($directBus, $failStrategy, $logger));
-$handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', function($command) {
+$handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', function ($command) {
     echo chr(10).sprintf('[FAILED] command [%s], number of tenatives %d', get_class($command), $command->getTryCount());
 });
 
