@@ -20,6 +20,11 @@ class Consumer
         $this->failStrategy = $failStrategy;
     }
 
+    /**
+     * @param string $command command
+     *
+     * @return Response|null
+     */
     public function consume($command)
     {
         $command = $this->provider->dequeue($command);
@@ -27,8 +32,12 @@ class Consumer
         if ($command) {
             try {
                 $this->commandBus->handle($command);
+
+                return new Response($command, Response::SUCCESS);
             } catch (\Exception $e) {
                 $this->failStrategy->onFail(new CommandHandlerFailedException($command, $e));
+
+                return new Response($command, Response::FAILED, $e);
             }
         }
     }
