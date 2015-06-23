@@ -29,7 +29,7 @@ class Response
 
     public function isError()
     {
-        return false === $this->isSuccess;
+        return false === $this->isSuccess();
     }
 
     public function getError()
