@@ -8,7 +8,7 @@ class FailedCommand implements CommandInterface
 {
     protected $tryCount;
 
-    public function __construct(CommandInterface $command, $tryCount = 0)
+    public function __construct(CommandInterface $command, $tryCount = 1)
     {
         $this->command = $command;
         $this->tryCount = $tryCount;
@@ -22,5 +22,10 @@ class FailedCommand implements CommandInterface
     public function getCommand()
     {
         return $this->command;
+    }
+
+    public function incrementTryCount()
+    {
+        $this->tryCount++;
     }
 }
