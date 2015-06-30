@@ -9,8 +9,6 @@ use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
 
 class DirectBus implements DirectCommandBusInterface
 {
-    private $commandStack = [];
-    private $executing = false;
     private $locator;
     private $logger;
 
@@ -26,22 +24,7 @@ class DirectBus implements DirectCommandBusInterface
 
     public function handle(CommandInterface $command)
     {
-        $this->commandStack[] = $command;
-
-        if ($this->executing) {
-            return;
-        }
-
-        while ($command = array_shift($this->commandStack)) {
-            $this->invokeHandler($command);
-        }
-    }
-
-    private function invokeHandler(CommandInterface $command)
-    {
         try {
-            $this->executing = true;
-
             $handler = $this->locator->getCommandHandler($command);
 
             if ($this->logger) {
@@ -63,11 +46,8 @@ class DirectBus implements DirectCommandBusInterface
             if ($this->logger) {
                 $this->logger->error(sprintf('[DirectCommandBus] Command [%s] with content [%s] failed', get_class($command), serialize($command)));
             }
-            $this->executing = false;
             throw $e;
         }
-
-        $this->executing = false;
     }
 
     /**

@@ -34,6 +34,10 @@ class Consumer
                 $this->commandBus->handle($command);
 
                 return new Response($command, Response::SUCCESS);
+            } catch (CommandHandlerFailedException $e) {
+                $this->failStrategy->onFail($e);
+
+                return new Response($e->getCommand(), Response::FAILED, $e->getPrevious());
             } catch (\Exception $e) {
                 $this->failStrategy->onFail(new CommandHandlerFailedException($command, $e));
 

@@ -37,10 +37,8 @@ $handlerLocator->addHandler('FooCommand', function ($command) {
     }
 });
 
-$handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\RetryCommand', new CommandBus\Domain\Handler\RetryHandler($directBus, $failStrategy, $logger));
-$handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', function ($command) {
-    echo chr(10).sprintf('[FAILED] command [%s], number of tenatives %d', get_class($command), $command->getTryCount());
-});
+$handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\RetryCommand', new CommandBus\Domain\Handler\RetryHandler($directBus, $logger));
+$handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', new CommandBus\Domain\Handler\FailedHandler($directBus, $logger));
 
 // consumer
 $consumer = new CommandBus\Domain\Consumer\Consumer(
@@ -54,5 +52,5 @@ do {
     $logger->info('----------------------------------');
 
     echo '.';
-    sleep(1); // yep ...
+    usleep(1); // yep ...
 } while (true);

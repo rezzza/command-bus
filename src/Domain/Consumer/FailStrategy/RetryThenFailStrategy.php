@@ -11,16 +11,16 @@ use Psr\Log\LoggerInterface;
 class RetryThenFailStrategy implements FailStrategyInterface
 {
     private $commandBus;
-
     private $failOnCount;
-
     private $logger;
+    private $requeueOnFail;
 
-    public function __construct(CommandBusInterface $commandBus, $failOnCount, LoggerInterface $logger = null)
+    public function __construct(CommandBusInterface $commandBus, $failOnCount, $requeueOnFail = true, LoggerInterface $logger = null)
     {
-        $this->commandBus  = $commandBus;
-        $this->failOnCount = $failOnCount;
-        $this->logger      = $logger;
+        $this->commandBus    = $commandBus;
+        $this->failOnCount   = $failOnCount;
+        $this->requeueOnFail = $requeueOnFail;
+        $this->logger        = $logger;
     }
 
     public function onFail(CommandHandlerFailedException $exception)
@@ -38,11 +38,13 @@ class RetryThenFailStrategy implements FailStrategyInterface
                 $this->logger->error(sprintf('[RetryThenFailStrategy] command [%s] go to failed queue.', get_class($command->getCommand())));
             }
 
-            return;
+            if ($this->requeueOnFail) {
+                $command->incrementTryCount();
+            } else {
+                return;
+            }
         } else {
             $command = new RetryCommand($command);
-
-
         }
 
         if ($this->logger) {
