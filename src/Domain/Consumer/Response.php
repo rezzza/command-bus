@@ -36,4 +36,9 @@ class Response
     {
         return $this->error;
     }
+
+    public function getCommand()
+    {
+        return $this->command;
+    }
 }

@@ -17,7 +17,9 @@ $logger = new Logger();
 // redis bus
 $redis = new \Redis();
 $redis->connect('127.0.0.1');
-$redisBus = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $logger);
+
+$redisKeyGenerator = new CommandBus\Infra\Provider\Redis\RedisKeyGenerator();
+$redisBus = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $redisKeyGenerator, $logger);
 
 // direct bus and its handlers.
 $handlerLocator = new CommandBus\Infra\Handler\MemoryHandlerLocator();
@@ -41,10 +43,12 @@ $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\RetryCommand', new
 $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', new CommandBus\Domain\Handler\FailedHandler($directBus, $logger));
 
 // consumer
+$eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
 $consumer = new CommandBus\Domain\Consumer\Consumer(
-    new CommandBus\Infra\Provider\Redis\RedisConsumerProvider($redis),
+    new CommandBus\Infra\Provider\Redis\RedisConsumerProvider($redis, $redisKeyGenerator),
     $directBus,
-    $failStrategy
+    $failStrategy,
+    $eventDispatcher
 );
 
 do {

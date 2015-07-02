@@ -10,7 +10,6 @@ use Rezzza\CommandBus\Domain\Exception\CommandHandlerFailedException;
 class RetryHandler
 {
     private $commandBus;
-    private $failStrategy;
     private $logger;
 
     public function __construct(DirectCommandBusInterface $commandBus, LoggerInterface $logger = null)
