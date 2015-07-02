@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use Rezzza\CommandBus\Domain\CommandInterface;
 use Rezzza\CommandBus\Domain\Handler\CommandHandlerLocatorInterface;
 use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
+use Rezzza\CommandBus\Domain\Handler\HandlerDefinition;
 
 class DirectBus implements DirectCommandBusInterface
 {
@@ -34,7 +35,16 @@ class DirectBus implements DirectCommandBusInterface
             if (is_callable($handler)) {
                 $handler($command);
             } elseif (is_object($handler)) {
-                $method  = $this->getHandlerMethodName($command);
+                $method = null;
+                if ($handler instanceof HandlerDefinition) {
+                    $method  = $handler->getMethod();
+                    $handler = $handler->getObject();
+                }
+
+                if (null === $method) {
+                    $method  = $this->getHandlerMethodName($command);
+                }
+
                 if (!method_exists($handler, $method)) {
                     throw new \RuntimeException(sprintf("Service %s has no method %s to handle command.", get_class($handler), $method));
                 }
