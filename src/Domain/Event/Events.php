@@ -5,4 +5,5 @@ namespace Rezzza\CommandBus\Domain\Event;
 final class Events
 {
     const ON_CONSUMER_RESPONSE = 'on_consumer_response';
+    const PRE_HANDLE_COMMAND   = 'pre_handle_command';
 }

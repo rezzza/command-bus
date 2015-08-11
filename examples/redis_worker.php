@@ -12,18 +12,19 @@ $commandToConsume = $argv[1];
 
 use Rezzza\CommandBus;
 
-$logger = new Logger();
+$logger          = new Logger();
+$eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
 
 // redis bus
 $redis = new \Redis();
 $redis->connect('127.0.0.1');
 
 $redisKeyGenerator = new CommandBus\Infra\Provider\Redis\RedisKeyGenerator();
-$redisBus = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $redisKeyGenerator, $logger);
+$redisBus = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $redisKeyGenerator, $eventDispatcher, $logger);
 
 // direct bus and its handlers.
 $handlerLocator = new CommandBus\Infra\Handler\MemoryHandlerLocator();
-$directBus      = new CommandBus\Infra\Provider\Direct\DirectBus($handlerLocator, $logger);
+$directBus      = new CommandBus\Infra\Provider\Direct\DirectBus($handlerLocator, $eventDispatcher, $logger);
 
 // fail strategy, if command fail, it'll retry 10 times in a retry queue then go to a failed queue..
 $failStrategy = new CommandBus\Domain\Consumer\FailStrategy\RetryThenFailStrategy($redisBus, 10, $logger);
@@ -43,7 +44,6 @@ $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\RetryCommand', new
 $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', new CommandBus\Domain\Handler\FailedHandler($directBus, $logger));
 
 // consumer
-$eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
 $consumer = new CommandBus\Domain\Consumer\Consumer(
     new CommandBus\Infra\Provider\Redis\RedisConsumerProvider($redis, $redisKeyGenerator),
     $directBus,

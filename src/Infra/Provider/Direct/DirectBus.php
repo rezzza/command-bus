@@ -4,28 +4,35 @@ namespace Rezzza\CommandBus\Infra\Provider\Direct;
 
 use Psr\Log\LoggerInterface;
 use Rezzza\CommandBus\Domain\CommandInterface;
-use Rezzza\CommandBus\Domain\Handler\CommandHandlerLocatorInterface;
 use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
+use Rezzza\CommandBus\Domain\Event;
+use Rezzza\CommandBus\Domain\Handler\CommandHandlerLocatorInterface;
 use Rezzza\CommandBus\Domain\Handler\HandlerDefinition;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class DirectBus implements DirectCommandBusInterface
 {
     private $locator;
     private $logger;
+    private $eventDispatcher;
 
     /**
-     * @param CommandHandlerLocatorInterface $locator locator
-     * @param LoggerInterface                $logger  logger
+     * @param CommandHandlerLocatorInterface $locator         locator
+     * @param EventDispatcherInterface       $eventDispatcher eventDispatcher
+     * @param LoggerInterface                $logger          logger
      */
-    public function __construct(CommandHandlerLocatorInterface $locator, LoggerInterface $logger = null)
+    public function __construct(CommandHandlerLocatorInterface $locator, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger = null)
     {
-        $this->locator = $locator;
-        $this->logger  = $logger;
+        $this->locator         = $locator;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->logger          = $logger;
     }
 
     public function handle(CommandInterface $command)
     {
         try {
+            $this->eventDispatcher->dispatch(Event\Events::PRE_HANDLE_COMMAND, new Event\PreHandleCommandEvent($this, $command));
+
             $handler = $this->locator->getCommandHandler($command);
 
             if ($this->logger) {
