@@ -23,12 +23,12 @@ class RedisBus implements CommandBusInterface
     /**
      * @var EventDispatcherInterface
      */
-    private $eventDispatcher;
+    protected $eventDispatcher;
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @param \Redis                     $client          client
