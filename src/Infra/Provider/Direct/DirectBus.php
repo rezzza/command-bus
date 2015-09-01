@@ -61,7 +61,7 @@ class DirectBus implements DirectCommandBusInterface
             }
         } catch (\Exception $e) {
             if ($this->logger) {
-                $this->logger->error(sprintf('[DirectCommandBus] Command [%s] with content [%s] failed', get_class($command), serialize($command)));
+                $this->logger->error(sprintf('[DirectCommandBus] Command [%s] with content [%s] failed, exception: %s', get_class($command), serialize($command), $e->getMessage()));
             }
             throw $e;
         }
