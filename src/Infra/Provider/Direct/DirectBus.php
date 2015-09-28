@@ -28,7 +28,7 @@ class DirectBus implements DirectCommandBusInterface
         $this->logger          = $logger;
     }
 
-    public function handle(CommandInterface $command)
+    public function handle(CommandInterface $command, $priority = null)
     {
         try {
             $this->eventDispatcher->dispatch(Event\Events::PRE_HANDLE_COMMAND, new Event\PreHandleCommandEvent($this, $command));

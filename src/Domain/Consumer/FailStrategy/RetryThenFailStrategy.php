@@ -14,12 +14,14 @@ class RetryThenFailStrategy implements FailStrategyInterface
     private $failOnCount;
     private $logger;
     private $requeueOnFail;
+    private $priority;
 
-    public function __construct(CommandBusInterface $commandBus, $failOnCount, $requeueOnFail = true, LoggerInterface $logger = null)
+    public function __construct(CommandBusInterface $commandBus, $failOnCount, $requeueOnFail = true, $priority = CommandBusInterface::PRIORITY_LOW, LoggerInterface $logger = null)
     {
         $this->commandBus    = $commandBus;
         $this->failOnCount   = $failOnCount;
         $this->requeueOnFail = $requeueOnFail;
+        $this->priority      = $priority;
         $this->logger        = $logger;
     }
 
@@ -51,6 +53,6 @@ class RetryThenFailStrategy implements FailStrategyInterface
             $this->logger->error(sprintf('[RetryThenFailStrategy] command [%s] failed, attemps %d.', get_class($command->getCommand()), $command->getTryCount()));
         }
 
-        $this->commandBus->handle($command);
+        $this->commandBus->handle($command, $this->priority);
     }
 }
