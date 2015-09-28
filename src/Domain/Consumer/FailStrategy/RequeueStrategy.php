@@ -10,11 +10,14 @@ class RequeueStrategy implements FailStrategyInterface
 {
     private $commandBus;
 
+    private $priority;
+
     private $logger;
 
-    public function __construct(CommandBusInterface $commandBus, LoggerInterface $logger = null)
+    public function __construct(CommandBusInterface $commandBus, $priority = CommandBusInterface::PRIORITY_LOW, LoggerInterface $logger = null)
     {
         $this->commandBus = $commandBus;
+        $this->priority   = $priority;
         $this->logger     = $logger;
     }
 
@@ -24,6 +27,6 @@ class RequeueStrategy implements FailStrategyInterface
             $this->logger->error(sprintf('[RequeueStrategy] command [%s] failed. Requeue it.', get_class($exception->getCommand())));
         }
 
-        $this->commandBus->handle($exception->getCommand());
+        $this->commandBus->handle($exception->getCommand(), $this->priority);
     }
 }

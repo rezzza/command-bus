@@ -47,7 +47,7 @@ class RedisBus implements CommandBusInterface
     /**
      * {@inheritdoc}
      */
-    public function handle(CommandInterface $command)
+    public function handle(CommandInterface $command, $priority = null)
     {
         if ($this->logger) {
             $this->logger->info(sprintf('[RedisCommandBus] Add command [%s] with content [%s] to the queue', get_class($command), serialize($command)));
@@ -55,7 +55,9 @@ class RedisBus implements CommandBusInterface
 
         $this->eventDispatcher->dispatch(Event\Events::PRE_HANDLE_COMMAND, new Event\PreHandleCommandEvent($this, $command));
 
-        $this->client->rpush(
+        $redisMethod = ($priority >= CommandBusInterface::PRIORITY_HIGH) ? 'lpush' : 'rpush';
+
+        $this->client->{$redisMethod}(
             $this->keyGenerator->generate(get_class($command)),
             serialize($command)
         );
