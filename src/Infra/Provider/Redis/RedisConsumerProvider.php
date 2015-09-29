@@ -17,12 +17,20 @@ class RedisConsumerProvider implements ProviderInterface
     protected $keyGenerator;
 
     /**
-     * @param \Redis $client client
+     * @var integer (see BLPOP definition)
      */
-    public function __construct(\Redis $client, RedisKeyGeneratorInterface $keyGenerator)
+    protected $readBlockTimeout;
+
+    /**
+     * @param \Redis                     $client           client
+     * @param RedisKeyGeneratorInterface $keyGenerator     keyGenerator
+     * @param int                        $readBlockTimeout readBlockTimeout
+     */
+    public function __construct(\Redis $client, RedisKeyGeneratorInterface $keyGenerator, $readBlockTimeout = 0)
     {
-        $this->client       = $client;
-        $this->keyGenerator = $keyGenerator;
+        $this->client           = $client;
+        $this->keyGenerator     = $keyGenerator;
+        $this->readBlockTimeout = $readBlockTimeout;
     }
 
     /**
@@ -30,10 +38,10 @@ class RedisConsumerProvider implements ProviderInterface
      */
     public function dequeue($commandClass)
     {
-        $commandSerialized = $this->client->lpop(
-            $this->keyGenerator->generate($commandClass)
+        $commandSerialized = $this->client->blpop(
+            $this->keyGenerator->generate($commandClass), (int) $this->readBlockTimeout
         );
 
-        return $commandSerialized ? unserialize($commandSerialized) : null;
+        return false === empty($commandSerialized) ? unserialize($commandSerialized[1]) : null;
     }
 }
