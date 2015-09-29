@@ -72,11 +72,13 @@ do {
 
     $handlerLocator = new Rezzza\CommandBus\Infra\Handler\MemoryHandlerLocator();
     // add some handlers ...
-    $directBus      = new Rezzza\CommandBus\Infra\Provider\Direct\DirectBus($handlerLocator);
-    $failStrategy = new Rezzza\CommandBus\Domain\Consumer\FailStrategy\NoneStrategy();
+    $directBus         = new Rezzza\CommandBus\Infra\Provider\Direct\DirectBus($handlerLocator);
+    $failStrategy      = new Rezzza\CommandBus\Domain\Consumer\FailStrategy\NoneStrategy();
+    $redisKeyGenerator = new CommandBus\Infra\Provider\Redis\RedisKeyGenerator();
+    $serializer        = new CommandBus\Infra\Serializer\NativeSerializer();
 
     $consumer = new Rezzza\CommandBus\Domain\Consumer\Consumer(
-        new Rezzza\CommandBus\Infra\Provider\Redis\RedisConsumerProvider($redis),
+        new Rezzza\CommandBus\Infra\Provider\Redis\RedisConsumerProvider($redis, $redisKeyGenerator, $serializer),
         $directBus,
         $failStrategy
     );

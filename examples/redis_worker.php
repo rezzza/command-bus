@@ -20,7 +20,9 @@ $redis = new \Redis();
 $redis->connect('127.0.0.1');
 
 $redisKeyGenerator = new CommandBus\Infra\Provider\Redis\RedisKeyGenerator();
-$redisBus = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $redisKeyGenerator, $eventDispatcher, $logger);
+$serializer        = new CommandBus\Infra\Serializer\NativeSerializer();
+
+$redisBus = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $redisKeyGenerator, $serializer, $eventDispatcher, $logger);
 
 // direct bus and its handlers.
 $handlerLocator = new CommandBus\Infra\Handler\MemoryHandlerLocator();
@@ -45,7 +47,7 @@ $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', ne
 
 // consumer
 $consumer = new CommandBus\Domain\Consumer\Consumer(
-    new CommandBus\Infra\Provider\Redis\RedisConsumerProvider($redis, $redisKeyGenerator),
+    new CommandBus\Infra\Provider\Redis\RedisConsumerProvider($redis, $redisKeyGenerator, $serializer),
     $directBus,
     $failStrategy,
     $eventDispatcher
