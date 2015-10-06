@@ -3,6 +3,7 @@
 namespace Rezzza\CommandBus\Infra\Provider\Redis;
 
 use Rezzza\CommandBus\Domain\Consumer\ProviderInterface;
+use Rezzza\CommandBus\Domain\Serializer\CommandSerializerInterface;
 
 class RedisConsumerProvider implements ProviderInterface
 {
@@ -17,6 +18,11 @@ class RedisConsumerProvider implements ProviderInterface
     protected $keyGenerator;
 
     /**
+     * @var CommandSerializerInterface
+     */
+    protected $serializer;
+
+    /**
      * @var integer (see BLPOP definition)
      */
     protected $readBlockTimeout;
@@ -26,10 +32,11 @@ class RedisConsumerProvider implements ProviderInterface
      * @param RedisKeyGeneratorInterface $keyGenerator     keyGenerator
      * @param int                        $readBlockTimeout readBlockTimeout
      */
-    public function __construct(\Redis $client, RedisKeyGeneratorInterface $keyGenerator, $readBlockTimeout = 0)
+    public function __construct(\Redis $client, RedisKeyGeneratorInterface $keyGenerator, CommandSerializerInterface $serializer, $readBlockTimeout = 0)
     {
         $this->client           = $client;
         $this->keyGenerator     = $keyGenerator;
+        $this->serializer       = $serializer;
         $this->readBlockTimeout = $readBlockTimeout;
     }
 
@@ -42,6 +49,6 @@ class RedisConsumerProvider implements ProviderInterface
             $this->keyGenerator->generate($commandClass), (int) $this->readBlockTimeout
         );
 
-        return false === empty($commandSerialized) ? unserialize($commandSerialized[1]) : null;
+        return false === empty($commandSerialized) ? $this->serializer->deserialize($commandSerialized[1]) : null;
     }
 }
