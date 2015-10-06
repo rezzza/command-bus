@@ -30,11 +30,11 @@ class Consumer
     }
 
     /**
-     * @param string $command command
+     * @param string|null $command command
      *
      * @return Response|null
      */
-    public function consume($command)
+    public function consume($command = null)
     {
         $command = $this->provider->dequeue($command);
 

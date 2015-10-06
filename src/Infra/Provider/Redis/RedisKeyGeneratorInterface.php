@@ -14,5 +14,5 @@ interface RedisKeyGeneratorInterface
      *
      * @return string
      */
-    public function generate($commandClass);
+    public function generate($commandClass = null);
 }

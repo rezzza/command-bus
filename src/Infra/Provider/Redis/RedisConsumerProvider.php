@@ -43,7 +43,7 @@ class RedisConsumerProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function dequeue($commandClass)
+    public function dequeue($commandClass = null)
     {
         $commandSerialized = $this->client->blpop(
             $this->keyGenerator->generate($commandClass), (int) $this->readBlockTimeout

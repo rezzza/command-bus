@@ -15,7 +15,7 @@ class RedisKeyGenerator implements RedisKeyGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generate($commandClass)
+    public function generate($commandClass = null)
     {
         return self::PREFIX.$commandClass;
     }
