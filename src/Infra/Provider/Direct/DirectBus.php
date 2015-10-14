@@ -4,6 +4,7 @@ namespace Rezzza\CommandBus\Infra\Provider\Direct;
 
 use Psr\Log\LoggerInterface;
 use Rezzza\CommandBus\Domain\CommandInterface;
+use Rezzza\CommandBus\Domain\Consumer\Response;
 use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
 use Rezzza\CommandBus\Domain\Event;
 use Rezzza\CommandBus\Domain\Handler\CommandHandlerLocatorInterface;
@@ -56,6 +57,10 @@ class DirectBus implements DirectCommandBusInterface
                     throw new \RuntimeException(sprintf("Service %s has no method %s to handle command.", get_class($handler), $method));
                 }
                 $handler->$method($command);
+
+                $this->eventDispatcher->dispatch(Event\Events::ON_DIRECT_RESPONSE, new Event\OnDirectResponseEvent(new Response(
+                    $command, Response::SUCCESS
+                )));
             } else {
                 throw new \LogicException(sprintf('Handler locator return a not object|callable handler, type is %s', gettype($handler)));
             }
@@ -63,6 +68,11 @@ class DirectBus implements DirectCommandBusInterface
             if ($this->logger) {
                 $this->logger->error(sprintf('[DirectCommandBus] Command [%s] with content [%s] failed, exception: %s', get_class($command), serialize($command), $e->getMessage()));
             }
+
+            $this->eventDispatcher->dispatch(Event\Events::ON_DIRECT_RESPONSE, new Event\OnDirectResponseEvent(new Response(
+                $command, Response::FAILED, $e
+            )));
+
             throw $e;
         }
     }
