@@ -4,9 +4,7 @@ namespace Rezzza\CommandBus\Infra\Provider\Redis;
 
 use Rezzza\CommandBus\Domain\CommandBusInterface;
 use Rezzza\CommandBus\Domain\CommandInterface;
-use Rezzza\CommandBus\Domain\Event;
 use Rezzza\CommandBus\Domain\Serializer\CommandSerializerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RedisBus implements CommandBusInterface
 {
@@ -26,22 +24,15 @@ class RedisBus implements CommandBusInterface
     protected $serializer;
 
     /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
      * @param \Redis                     $client          client
      * @param RedisKeyGeneratorInterface $keyGenerator    keyGenerator
      * @param CommandSerializerInterface $serializer      serializer
-     * @param EventDispatcherInterface   $eventDispatcher eventDispatcher
      */
-    public function __construct(\Redis $client, RedisKeyGeneratorInterface $keyGenerator, CommandSerializerInterface $serializer, EventDispatcherInterface $eventDispatcher)
+    public function __construct(\Redis $client, RedisKeyGeneratorInterface $keyGenerator, CommandSerializerInterface $serializer)
     {
         $this->client            = $client;
         $this->keyGenerator      = $keyGenerator;
         $this->serializer        = $serializer;
-        $this->eventDispatcher   = $eventDispatcher;
     }
 
     /**
@@ -49,8 +40,6 @@ class RedisBus implements CommandBusInterface
      */
     public function handle(CommandInterface $command, $priority = null)
     {
-        $this->eventDispatcher->dispatch(Event\Events::PRE_HANDLE_COMMAND, new Event\PreHandleCommandEvent($this, $command));
-
         $serializedCommand = $this->serializer->serialize($command);
 
         $redisMethod = ($priority >= CommandBusInterface::PRIORITY_HIGH) ? 'lpush' : 'rpush';
