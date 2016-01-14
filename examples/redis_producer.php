@@ -12,9 +12,8 @@ $redis = new \Redis();
 $redis->connect('127.0.0.1');
 
 $redisKeyGenerator = new CommandBus\Infra\Provider\Redis\RedisKeyGenerator();
-$eventDispatcher   = new Symfony\Component\EventDispatcher\EventDispatcher();
 $serializer        = new CommandBus\Infra\Serializer\NativeSerializer();
-$bus               = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $redisKeyGenerator, $serializer, $eventDispatcher, new Logger());
+$bus               = new CommandBus\Infra\Provider\Redis\RedisBus($redis, $redisKeyGenerator, $serializer);
 
 for ($j = 0; $j < $i; $j++) {
     $bus->handle(new FooCommand(uniqid()));

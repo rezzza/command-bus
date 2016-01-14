@@ -4,13 +4,13 @@ namespace Rezzza\CommandBus\Domain;
 
 use Psr\Log\LoggerInterface;
 
-class LoggerBus implements CommandBusInterface
+class LoggerBus implements DirectCommandBusInterface
 {
     private $logger;
 
     private $delegateCommandBus;
 
-    public function __construct(LoggerBus $logger, CommandBusInterface $delegateCommandBus)
+    public function __construct(LoggerInterface $logger, CommandBusInterface $delegateCommandBus)
     {
         $this->logger = $logger;
         $this->delegateCommandBus = $delegateCommandBus;

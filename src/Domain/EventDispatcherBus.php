@@ -6,7 +6,7 @@ use Rezzza\CommandBus\Domain\Consumer\Response;
 use Rezzza\CommandBus\Domain\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class EventDispatcherBus implements CommandBusInterface
+class EventDispatcherBus implements DirectCommandBusInterface
 {
     private $eventDispatcher;
 
