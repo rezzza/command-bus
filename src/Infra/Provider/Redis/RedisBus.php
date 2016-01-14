@@ -2,7 +2,6 @@
 
 namespace Rezzza\CommandBus\Infra\Provider\Redis;
 
-use Psr\Log\LoggerInterface;
 use Rezzza\CommandBus\Domain\CommandBusInterface;
 use Rezzza\CommandBus\Domain\CommandInterface;
 use Rezzza\CommandBus\Domain\Event;
@@ -32,24 +31,17 @@ class RedisBus implements CommandBusInterface
     protected $eventDispatcher;
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @param \Redis                     $client          client
      * @param RedisKeyGeneratorInterface $keyGenerator    keyGenerator
      * @param CommandSerializerInterface $serializer      serializer
      * @param EventDispatcherInterface   $eventDispatcher eventDispatcher
-     * @param LoggerInterface            $logger          logger
      */
-    public function __construct(\Redis $client, RedisKeyGeneratorInterface $keyGenerator, CommandSerializerInterface $serializer, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger = null)
+    public function __construct(\Redis $client, RedisKeyGeneratorInterface $keyGenerator, CommandSerializerInterface $serializer, EventDispatcherInterface $eventDispatcher)
     {
         $this->client            = $client;
         $this->keyGenerator      = $keyGenerator;
         $this->serializer        = $serializer;
         $this->eventDispatcher   = $eventDispatcher;
-        $this->logger            = $logger;
     }
 
     /**
@@ -60,10 +52,6 @@ class RedisBus implements CommandBusInterface
         $this->eventDispatcher->dispatch(Event\Events::PRE_HANDLE_COMMAND, new Event\PreHandleCommandEvent($this, $command));
 
         $serializedCommand = $this->serializer->serialize($command);
-
-        if ($this->logger) {
-            $this->logger->info(sprintf('[RedisCommandBus] Add command [%s] with content [%s] to the queue', get_class($command), $serializedCommand));
-        }
 
         $redisMethod = ($priority >= CommandBusInterface::PRIORITY_HIGH) ? 'lpush' : 'rpush';
 
