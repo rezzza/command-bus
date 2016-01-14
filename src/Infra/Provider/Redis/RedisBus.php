@@ -35,6 +35,11 @@ class RedisBus implements CommandBusInterface
         $this->serializer        = $serializer;
     }
 
+    public function getHandleType()
+    {
+        return CommandBusInterface::ASYNC_HANDLE_TYPE;
+    }
+
     /**
      * {@inheritdoc}
      */

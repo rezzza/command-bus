@@ -4,7 +4,7 @@ namespace Rezzza\CommandBus\Domain;
 
 use Psr\Log\LoggerInterface;
 
-class LoggerBus implements DirectCommandBusInterface
+class LoggerBus implements CommandBusInterface
 {
     private $logger;
 
@@ -14,6 +14,11 @@ class LoggerBus implements DirectCommandBusInterface
     {
         $this->logger = $logger;
         $this->delegateCommandBus = $delegateCommandBus;
+    }
+
+    public function getHandleType()
+    {
+        return $this->delegateCommandBus->getHandleType();
     }
 
     public function handle(CommandInterface $command, $priority = null)

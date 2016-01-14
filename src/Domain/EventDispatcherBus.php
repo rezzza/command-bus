@@ -6,7 +6,7 @@ use Rezzza\CommandBus\Domain\Consumer\Response;
 use Rezzza\CommandBus\Domain\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class EventDispatcherBus implements DirectCommandBusInterface
+class EventDispatcherBus implements CommandBusInterface
 {
     private $eventDispatcher;
 
@@ -16,6 +16,11 @@ class EventDispatcherBus implements DirectCommandBusInterface
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->delegateCommandBus = $delegateCommandBus;
+    }
+
+    public function getHandleType()
+    {
+        return $this->delegateCommandBus->getHandleType();
     }
 
     public function handle(CommandInterface $command, $priority = null)

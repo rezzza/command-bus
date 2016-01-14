@@ -3,7 +3,7 @@
 namespace Rezzza\CommandBus\Domain\Handler;
 
 use Psr\Log\LoggerInterface;
-use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
+use Rezzza\CommandBus\Domain\CommandBusInterface;
 use Rezzza\CommandBus\Domain\Command\RetryCommand;
 use Rezzza\CommandBus\Domain\Exception\CommandHandlerFailedException;
 
@@ -12,7 +12,7 @@ class RetryHandler
     private $commandBus;
     private $logger;
 
-    public function __construct(DirectCommandBusInterface $commandBus, LoggerInterface $logger = null)
+    public function __construct(CommandBusInterface $commandBus, LoggerInterface $logger = null)
     {
         $this->commandBus   = $commandBus;
         $this->logger       = $logger;

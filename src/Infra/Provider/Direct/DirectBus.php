@@ -3,13 +3,13 @@
 namespace Rezzza\CommandBus\Infra\Provider\Direct;
 
 use Rezzza\CommandBus\Domain\CommandInterface;
-use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
+use Rezzza\CommandBus\Domain\CommandBusInterface;
 use Rezzza\CommandBus\Domain\Handler\CommandHandlerLocatorInterface;
 use Rezzza\CommandBus\Domain\Handler\HandlerDefinition;
 use Rezzza\CommandBus\Domain\Handler\HandlerMethodResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class DirectBus implements DirectCommandBusInterface
+class DirectBus implements CommandBusInterface
 {
     private $locator;
     private $methodResolver;
@@ -22,6 +22,11 @@ class DirectBus implements DirectCommandBusInterface
     {
         $this->locator         = $locator;
         $this->methodResolver = $methodResolver;
+    }
+
+    public function getHandleType()
+    {
+        return CommandBusInterface::SYNC_HANDLE_TYPE;
     }
 
     public function handle(CommandInterface $command, $priority = null)
