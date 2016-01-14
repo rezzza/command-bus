@@ -8,21 +8,25 @@ use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
 use Rezzza\CommandBus\Domain\Event;
 use Rezzza\CommandBus\Domain\Handler\CommandHandlerLocatorInterface;
 use Rezzza\CommandBus\Domain\Handler\HandlerDefinition;
+use Rezzza\CommandBus\Domain\Handler\HandlerMethodResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class DirectBus implements DirectCommandBusInterface
 {
     private $locator;
     private $eventDispatcher;
+    private $methodResolver;
 
     /**
      * @param CommandHandlerLocatorInterface $locator         locator
      * @param EventDispatcherInterface       $eventDispatcher eventDispatcher
+     * @param HandlerMethodResolverInterface $methodResolver
      */
-    public function __construct(CommandHandlerLocatorInterface $locator, EventDispatcherInterface $eventDispatcher)
+    public function __construct(CommandHandlerLocatorInterface $locator, EventDispatcherInterface $eventDispatcher, HandlerMethodResolverInterface $methodResolver)
     {
         $this->locator         = $locator;
         $this->eventDispatcher = $eventDispatcher;
+        $this->methodResolver = $methodResolver;
     }
 
     public function handle(CommandInterface $command, $priority = null)
@@ -42,7 +46,7 @@ class DirectBus implements DirectCommandBusInterface
                 }
 
                 if (null === $method) {
-                    $method  = $this->getHandlerMethodName($command);
+                    $method  = $this->methodResolver->resolveMethodName($command, $handler);
                 }
 
                 if (!method_exists($handler, $method)) {
@@ -63,19 +67,5 @@ class DirectBus implements DirectCommandBusInterface
 
             throw $e;
         }
-    }
-
-    /**
-     * Method \Acme\Foo\Bar\DoActionCommand return doAction.
-     *
-     * @param CommandInterface $command command
-     *
-     * @return string
-     */
-    private function getHandlerMethodName(CommandInterface $command)
-    {
-        $parts = explode("\\", get_class($command));
-
-        return str_replace("Command", "", lcfirst(end($parts)));
     }
 }
