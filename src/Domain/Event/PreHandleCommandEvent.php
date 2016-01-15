@@ -2,7 +2,6 @@
 
 namespace Rezzza\CommandBus\Domain\Event;
 
-use Rezzza\CommandBus\Domain\CommandBusInterface;
 use Rezzza\CommandBus\Domain\CommandInterface;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -14,15 +13,19 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class PreHandleCommandEvent extends Event
 {
-    public function __construct(CommandBusInterface $bus, CommandInterface $command)
+    private $handleType;
+
+    private $command;
+
+    public function __construct($handleType, CommandInterface $command)
     {
-        $this->bus     = $bus;
+        $this->handleType = $handleType;
         $this->command = $command;
     }
 
-    public function getBus()
+    public function getHandleType()
     {
-        return $this->bus;
+        return $this->handleType;
     }
 
     public function getCommand()

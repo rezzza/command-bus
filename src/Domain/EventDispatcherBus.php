@@ -26,17 +26,22 @@ class EventDispatcherBus implements CommandBusInterface
     public function handle(CommandInterface $command, $priority = null)
     {
         try {
-            $this->eventDispatcher->dispatch(Event\Events::PRE_HANDLE_COMMAND, new Event\PreHandleCommandEvent($this, $command));
+            $this->eventDispatcher->dispatch(
+                Event\Events::PRE_HANDLE_COMMAND,
+                new Event\PreHandleCommandEvent($this->getHandleType(), $command)
+            );
 
             $this->delegateCommandBus->handle($command, $priority);
 
-            $this->eventDispatcher->dispatch(Event\Events::ON_DIRECT_RESPONSE, new Event\OnDirectResponseEvent(new Response(
-                $command, Response::SUCCESS
-            )));
+            $this->eventDispatcher->dispatch(
+                Event\Events::ON_DIRECT_RESPONSE,
+                new Event\OnDirectResponseEvent($this->getHandleType(), new Response($command, Response::SUCCESS))
+            );
         } catch (\Exception $e) {
-            $this->eventDispatcher->dispatch(Event\Events::ON_DIRECT_RESPONSE, new Event\OnDirectResponseEvent(new Response(
-                $command, Response::FAILED, $e
-            )));
+            $this->eventDispatcher->dispatch(
+                Event\Events::ON_DIRECT_RESPONSE,
+                new Event\OnDirectResponseEvent($this->getHandleType(), new Response($command, Response::FAILED, $e))
+            );
 
             throw $e;
         }

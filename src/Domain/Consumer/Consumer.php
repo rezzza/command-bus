@@ -57,7 +57,10 @@ class Consumer
                 $response = new Response($command, Response::FAILED, $e);
             }
 
-            $this->eventDispatcher->dispatch(Event\Events::ON_CONSUMER_RESPONSE, new Event\OnConsumerResponseEvent($response));
+            $this->eventDispatcher->dispatch(
+                Event\Events::ON_CONSUMER_RESPONSE,
+                new Event\OnConsumerResponseEvent($this->commandBus->getHandleType(), $response)
+            );
 
             return $response;
         }
