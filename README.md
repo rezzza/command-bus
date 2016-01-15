@@ -1,6 +1,8 @@
 Rezzza\CommandBus
 -----------------
 
+[![Build Status](https://travis-ci.org/rezzza/command-bus.svg?branch=master)](https://travis-ci.org/rezzza/command-bus)
+
 Light command bus.
 
 # Installation
