@@ -13,12 +13,23 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class OnDirectResponseEvent extends Event
 {
+    private $handleType;
+
+    private $response;
+
     /**
+     * @param string $handleType
      * @param Response $response response
      */
-    public function __construct(Response $response)
+    public function __construct($handleType, Response $response)
     {
+        $this->handleType = $handleType;
         $this->response = $response;
+    }
+
+    public function getHandleType()
+    {
+        return $this->handleType;
     }
 
     /**

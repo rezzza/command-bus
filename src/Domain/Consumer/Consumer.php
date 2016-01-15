@@ -3,7 +3,7 @@
 namespace Rezzza\CommandBus\Domain\Consumer;
 
 use Rezzza\CommandBus\Domain\Consumer\FailStrategy\FailStrategyInterface;
-use Rezzza\CommandBus\Domain\DirectCommandBusInterface;
+use Rezzza\CommandBus\Domain\CommandBusInterface;
 use Rezzza\CommandBus\Domain\Event;
 use Rezzza\CommandBus\Domain\Exception\CommandHandlerFailedException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -17,12 +17,16 @@ class Consumer
 
     /**
      * @param ProviderInterface         $provider     provider
-     * @param DirectCommandBusInterface $commandBus   commandBus
+     * @param CommandBusInterface $commandBus   commandBus
      * @param FailStrategyInterface     $failStrategy failStrategy
      * @param EventDispatcherInterface  $eventDispatcher eventDispatcher
      */
-    public function __construct(ProviderInterface $provider, DirectCommandBusInterface $commandBus, FailStrategyInterface $failStrategy, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ProviderInterface $provider, CommandBusInterface $commandBus, FailStrategyInterface $failStrategy, EventDispatcherInterface $eventDispatcher)
     {
+        if (CommandBusInterface::SYNC_HANDLE_TYPE !== $commandBus->getHandleType()) {
+            throw new \RuntimeException('Consume should be powered by a synchronous handle type');
+        }
+
         $this->provider        = $provider;
         $this->commandBus      = $commandBus;
         $this->failStrategy    = $failStrategy;
@@ -53,7 +57,10 @@ class Consumer
                 $response = new Response($command, Response::FAILED, $e);
             }
 
-            $this->eventDispatcher->dispatch(Event\Events::ON_CONSUMER_RESPONSE, new Event\OnConsumerResponseEvent($response));
+            $this->eventDispatcher->dispatch(
+                Event\Events::ON_CONSUMER_RESPONSE,
+                new Event\OnConsumerResponseEvent($this->commandBus->getHandleType(), $response)
+            );
 
             return $response;
         }

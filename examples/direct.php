@@ -11,8 +11,6 @@ $handlerLocator = new CommandBus\Infra\Handler\MemoryHandlerLocator();
 $handlerLocator->addHandler('FooCommand', function($command) {
     echo sprintf('Launch command [%s] with id: %s', get_class($command), $command->getId());
 });
-
-$eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
-
-$bus = new CommandBus\Infra\Provider\Direct\DirectBus($handlerLocator, $eventDispatcher);
+$handlerMethodNameResolver = new CommandBus\Domain\Handler\MethodResolver\ClassNameAsMethodWithoutSuffix;
+$bus = new CommandBus\Infra\Provider\Direct\DirectBus($handlerLocator, $handlerMethodNameResolver);
 $bus->handle($command);
