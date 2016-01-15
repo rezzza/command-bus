@@ -10,7 +10,7 @@ Light command bus.
 `composer.json`:
 
 ```json
-    "rezzza/command-bus": "~1.0@dev"
+    "rezzza/command-bus": "~2.0"
 ```
 
 # Command
