@@ -28,6 +28,7 @@ class LoggerBus implements CommandBusInterface
                 'CommandBus handle command',
                 [
                     'bus' => get_class($this->delegateCommandBus),
+                    'handle_type' => $this->getHandleType(),
                     'command' => serialize($command)
                 ]
             );
@@ -37,6 +38,7 @@ class LoggerBus implements CommandBusInterface
                 'CommandBus failed to handle command',
                 [
                     'bus' => get_class($this->delegateCommandBus),
+                    'handle_type' => $this->getHandleType(),
                     'command' => serialize($command),
                     'exception_message' => $e->getMessage()
                 ]
