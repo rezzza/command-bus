@@ -3,6 +3,7 @@
 namespace Rezzza\CommandBus\Domain;
 
 use Psr\Log\LoggerInterface;
+use Rezzza\CommandBus\Domain\Serializer\CommandSerializerInterface;
 
 class LoggerBus implements CommandBusInterface
 {
@@ -10,10 +11,16 @@ class LoggerBus implements CommandBusInterface
 
     private $delegateCommandBus;
 
-    public function __construct(LoggerInterface $logger, CommandBusInterface $delegateCommandBus)
-    {
+    private $commandSerializer;
+
+    public function __construct(
+        LoggerInterface $logger,
+        CommandBusInterface $delegateCommandBus,
+        CommandSerializerInterface $commandSerializer
+    ) {
         $this->logger = $logger;
         $this->delegateCommandBus = $delegateCommandBus;
+        $this->commandSerializer = $commandSerializer;
     }
 
     public function getHandleType()
@@ -29,7 +36,7 @@ class LoggerBus implements CommandBusInterface
                 [
                     'bus' => get_class($this->delegateCommandBus),
                     'handle_type' => $this->getHandleType(),
-                    'command' => serialize($command)
+                    'command' => $this->commandSerializer->serialize($command)
                 ]
             );
             $this->delegateCommandBus->handle($command, $priority);
@@ -39,7 +46,7 @@ class LoggerBus implements CommandBusInterface
                 [
                     'bus' => get_class($this->delegateCommandBus),
                     'handle_type' => $this->getHandleType(),
-                    'command' => serialize($command),
+                    'command' => $this->commandSerializer->serialize($command),
                     'exception_message' => $e->getMessage()
                 ]
             );

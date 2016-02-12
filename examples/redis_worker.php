@@ -46,7 +46,7 @@ $handlerLocator->addHandler('FooCommand', function ($command) {
 $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\RetryCommand', new CommandBus\Domain\Handler\RetryHandler($directBus, $logger));
 $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', new CommandBus\Domain\Handler\FailedHandler($directBus, $logger));
 
-$loggerBus = new Rezzza\CommandBus\Domain\LoggerBus($logger, $directBus);
+$loggerBus = new Rezzza\CommandBus\Domain\LoggerBus($logger, $directBus, $serializer);
 
 // consumer
 $consumer = new CommandBus\Domain\Consumer\Consumer(
