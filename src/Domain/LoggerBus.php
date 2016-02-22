@@ -3,7 +3,7 @@
 namespace Rezzza\CommandBus\Domain;
 
 use Psr\Log\LoggerInterface;
-use Rezzza\CommandBus\Domain\Serializer\CommandSerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class LoggerBus implements CommandBusInterface
 {
@@ -16,11 +16,11 @@ class LoggerBus implements CommandBusInterface
     public function __construct(
         LoggerInterface $logger,
         CommandBusInterface $delegateCommandBus,
-        CommandSerializerInterface $commandSerializer
+        NormalizerInterface $normalizer
     ) {
         $this->logger = $logger;
         $this->delegateCommandBus = $delegateCommandBus;
-        $this->commandSerializer = $commandSerializer;
+        $this->normalizer = $normalizer;
     }
 
     public function getHandleType()
@@ -32,21 +32,21 @@ class LoggerBus implements CommandBusInterface
     {
         try {
             $this->logger->notice(
-                'CommandBus handle command',
+                sprintf('CommandBus handle command %s', get_class($command)),
                 [
                     'bus' => get_class($this->delegateCommandBus),
                     'handle_type' => $this->getHandleType(),
-                    'command' => $this->commandSerializer->serialize($command)
+                    'command' => $this->normalizer->normalize($command),
                 ]
             );
             $this->delegateCommandBus->handle($command, $priority);
         } catch (\Exception $e) {
             $this->logger->error(
-                'CommandBus failed to handle command',
+                sprintf('CommandBus failed to handle command %s', get_class($command)),
                 [
                     'bus' => get_class($this->delegateCommandBus),
                     'handle_type' => $this->getHandleType(),
-                    'command' => $this->commandSerializer->serialize($command),
+                    'command' => $this->normalizer->normalize($command),
                     'exception_message' => $e->getMessage()
                 ]
             );
