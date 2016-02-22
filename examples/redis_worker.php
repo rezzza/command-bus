@@ -46,7 +46,13 @@ $handlerLocator->addHandler('FooCommand', function ($command) {
 $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\RetryCommand', new CommandBus\Domain\Handler\RetryHandler($directBus, $logger));
 $handlerLocator->addHandler('Rezzza\CommandBus\Domain\Command\FailedCommand', new CommandBus\Domain\Handler\FailedHandler($directBus, $logger));
 
-$loggerBus = new Rezzza\CommandBus\Domain\LoggerBus($logger, $directBus, $serializer);
+$loggerBus = new Rezzza\CommandBus\Domain\LoggerBus(
+    $logger,
+    $directBus,
+    new \Symfony\Component\Serializer\Serializer([
+        new \Symfony\Component\Serializer\Normalizer\PropertyNormalizer
+    ])
+);
 
 // consumer
 $consumer = new CommandBus\Domain\Consumer\Consumer(
