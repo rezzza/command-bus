@@ -22,8 +22,9 @@ class DirectBus extends atoum\test
                 $sut = $this->newTestedInstance($locator, $methodResolver)
             )
             ->when(
-                $sut->handle($command)
+                $result = $sut->handle($command)
             )
+            ->boolean($result)->isTrue()
             ->then
                 ->mock($handler)
                     ->call('sendWelcomeEmail')

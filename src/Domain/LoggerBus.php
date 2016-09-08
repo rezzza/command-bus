@@ -39,7 +39,7 @@ class LoggerBus implements CommandBusInterface
                     'command' => $this->normalizer->normalize($command),
                 ]
             );
-            $this->delegateCommandBus->handle($command, $priority);
+            return $this->delegateCommandBus->handle($command, $priority);
         } catch (\Exception $e) {
             $this->logger->error(
                 sprintf('CommandBus failed to handle command %s', get_class($command)),

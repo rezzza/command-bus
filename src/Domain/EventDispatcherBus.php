@@ -31,12 +31,14 @@ class EventDispatcherBus implements CommandBusInterface
                 new Event\PreHandleCommandEvent($this->getHandleType(), $command)
             );
 
-            $this->delegateCommandBus->handle($command, $priority);
+            $result = $this->delegateCommandBus->handle($command, $priority);
 
             $this->eventDispatcher->dispatch(
                 Event\Events::ON_DIRECT_RESPONSE,
                 new Event\OnDirectResponseEvent($this->getHandleType(), new Response($command, Response::SUCCESS))
             );
+
+            return $result;
         } catch (\Exception $e) {
             $this->eventDispatcher->dispatch(
                 Event\Events::ON_DIRECT_RESPONSE,

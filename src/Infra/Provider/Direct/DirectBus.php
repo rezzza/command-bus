@@ -20,7 +20,7 @@ class DirectBus implements CommandBusInterface
      */
     public function __construct(CommandHandlerLocatorInterface $locator, HandlerMethodResolverInterface $methodResolver)
     {
-        $this->locator         = $locator;
+        $this->locator        = $locator;
         $this->methodResolver = $methodResolver;
     }
 
@@ -34,7 +34,7 @@ class DirectBus implements CommandBusInterface
         $handler = $this->locator->getCommandHandler($command);
 
         if (is_callable($handler)) {
-            $handler($command);
+            return $handler($command);
         } elseif (is_object($handler)) {
             $method = null;
             if ($handler instanceof HandlerDefinition) {
@@ -49,7 +49,7 @@ class DirectBus implements CommandBusInterface
             if (!method_exists($handler, $method)) {
                 throw new \RuntimeException(sprintf("Service %s has no method %s to handle command.", get_class($handler), $method));
             }
-            $handler->$method($command);
+            return $handler->$method($command);
         } else {
             throw new \LogicException(sprintf('Handler locator return a not object|callable handler, type is %s', gettype($handler)));
         }
