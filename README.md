@@ -46,10 +46,11 @@ The handler could be:
 # Command bus
 
 It'll find a command handler then handle the command.
-We provide at this moment two command bus:
+We provide at this moment three command bus:
 
     - Direct (synchronous)
     - Redis (asynchronous)
+    - Rabbit (asynchronous)
     - Implement your own command bus with `\Rezzza\CommandBus\Domain\CommandBusInterface`
 
 You can see `examples` to see them in action.
