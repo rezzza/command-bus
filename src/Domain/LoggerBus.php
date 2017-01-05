@@ -3,6 +3,7 @@
 namespace Rezzza\CommandBus\Domain;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class LoggerBus implements CommandBusInterface
@@ -13,14 +14,22 @@ class LoggerBus implements CommandBusInterface
 
     private $commandSerializer;
 
+    private $handleLogLevel;
+
+    private $errorLogLevel;
+
     public function __construct(
         LoggerInterface $logger,
         CommandBusInterface $delegateCommandBus,
-        NormalizerInterface $normalizer
+        NormalizerInterface $normalizer,
+        $handleLogLevel = LogLevel::NOTICE,
+        $errorLogLevel = LogLevel::ERROR
     ) {
         $this->logger = $logger;
         $this->delegateCommandBus = $delegateCommandBus;
         $this->normalizer = $normalizer;
+        $this->handleLogLevel = $handleLogLevel;
+        $this->errorLogLevel = $errorLogLevel;
     }
 
     public function getHandleType()
@@ -31,7 +40,8 @@ class LoggerBus implements CommandBusInterface
     public function handle(CommandInterface $command, $priority = null)
     {
         try {
-            $this->logger->notice(
+            $this->logger->log(
+                $this->handleLogLevel,
                 sprintf('CommandBus handle command %s', get_class($command)),
                 [
                     'bus' => get_class($this->delegateCommandBus),
@@ -41,7 +51,8 @@ class LoggerBus implements CommandBusInterface
             );
             return $this->delegateCommandBus->handle($command, $priority);
         } catch (\Exception $e) {
-            $this->logger->error(
+            $this->logger->log(
+                $this->errorLogLevel,
                 sprintf('CommandBus failed to handle command %s', get_class($command)),
                 [
                     'bus' => get_class($this->delegateCommandBus),
