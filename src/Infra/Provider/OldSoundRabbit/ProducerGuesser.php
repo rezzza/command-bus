@@ -5,6 +5,7 @@ namespace Rezzza\CommandBus\Infra\Provider\OldSoundRabbit;
 use Rezzza\CommandBus\Domain\CommandInterface;
 use Doctrine\Common\Inflector\Inflector;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Rezzza\CommandBusBundle\Provider\OldSoundRabbit\NoProducerFoundException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 
